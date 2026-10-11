@@ -1,0 +1,93 @@
+Day 09 — Docker Integration with Jenkins & GitLab
+🔹 Ansible - Setup Docker Container for Ngnix
+- name: Setup Docker Container for Nginc
+hosts: all
+become: yes
+tasks: 
+   - name: Pull Nginx image 
+     docker_image:
+    source: Pull
+  - name:Run Ngunc Container
+    docker_container:
+      name: nginx-Container
+      image: nginx
+      state: started
+      published_ports:
+       -"8008:80"
+🔹 Terraform -EC2 with Auto Scaling Group 
+resource "aws_launch_configuration" "example"{
+     name = "example-config"
+    image_id = "ami-0abcd1234abcd1234"
+     instance_type = "t3.medium"   
+}
+
+
+resource "aws_autoscaling_group" "example" {
+    desired_capacity  = 2
+    max_size          = 3
+    min_size          = 1
+    vpc_zone_identifier = ["subnet-12345678"]
+    launch_configuration = aws_launch_configuration.example.id 
+  }
+🔹 Kubernetes - Horizontal Pod Autoscaler (HPA)
+ apiVersion: apps/v1
+ kind: Deployment
+  metadata:
+     name: pathnex-Deployment
+spec:
+    replicas: 1
+    selector: 
+      matchLabls:
+        app; pathnex-app
+     template:
+       metadata:
+         lables:
+           app: pathnex-app
+     spec:
+       containers:
+          - name: nginx
+            image: nginx 
+            ports:
+              - containerPort: 80
+
+------
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadat:
+   name: pathnex-hpa 
+spec: 
+   scaleTargetRef:
+     apiVersion: app/v1 
+     kind: Deployment
+     name: pathnex-Deployment
+minReplicas: 1
+maxReplicas: 10
+targetCPUUtilizationPrecentage: 50
+🔹 Jenkinsfile -Deploy to kubernetes 
+pipeline{
+  agent any 
+  stages{
+    stage('Deploy to kubernetes'){
+   step{ 
+       script{
+         sh'kubect1 apply -f depoyment.yml
+         }
+      } 
+    }
+  }
+}
+🔹 GitLab CI/CD -Deploy to kubernetes
+ stages:
+   -deploy 
+
+deploy:
+   stage: deploy
+   script:
+      - kubect1 apply -f kubernetes/deployment.yml
+
+🔹Docker
+# Enviroment Variables
+FROM ubuntu:22.04 
+ENV COURSE= DevOps
+CMD echo "&INSTITUTE -&COURSE"
