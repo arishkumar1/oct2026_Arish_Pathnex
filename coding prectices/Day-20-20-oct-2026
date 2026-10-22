@@ -1,0 +1,85 @@
+Day 20 _ Security , Hardening and Compliacne
+🔹Ansible - Configure Firewall  with iptables
+- name: Configure Firewall with iptables 
+hosts: all
+ bacome: yes
+ tasks: 
+ - name: Set default policeies to drop all traffic
+   command: iptables -P INPUT DROP
+ - name: Allow SSH and HTTP traffic
+   command: ipatables-A INPUT -p tcp --dport 22 -j ACCEPT
+   command: iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+ - name: Save iptables configuration
+   command: service ipatables Save
+🔹 Terraform - configuration Security  Group for EC2
+resource "aws_secuirty_group" "pathnex-sg"{
+  name_prefix  ="pathnex-sg-"
+  description  =" Allow SSH and HTTP"
+}
+
+ingress{
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+   
+ingress{
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+ }
+}
+🔹 kubernetes _RBAC configuration for Access COntrol
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRolebiding
+name: cluster-admin
+apiGruoup: rbac.authorization.k8s.io
+🔹 Jenkinsfile- Secure Credentails Management
+pipeline{
+  agent any
+  enviroment{
+   REGISTRY_PASSWORD =
+   credentials('docker-registry-password')
+ }
+   stages{
+    stages('Build'){
+       script{
+        docker.withResistry(https://docker.io','docker-credentials'){
+              docker.image('pathnex-web-app').push('latest')
+        }
+      }
+    }
+  }
+}
+🔹 GitLab CI/CD — Secure Deployment with Secrets Management
+stages:
+   - build 
+   - push 
+   - deploy 
+
+build:
+   stage: build
+   script:
+     - docker build -t pathnex-web-app.
+
+push: 
+  stage: push
+  script:
+     - docker login -u "$CI_REGISTRY_USER " -p "$CI_REGISTRY_PASSWORD"
+     - docker push pathnex-web-app
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl apply -f kubernetes/deployment.yaml
+    - kubectl get pods --watch
+
+🔹 docker
+# Docker Networking
+docker network create pathnex-netword
+docker run -dit --name c1 --network pathnex-network ubuntu
+docker run  -dit --name c2 --network pathnex-network ubuntu
+
+
